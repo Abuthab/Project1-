@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRY LOGI | GPS Tracking Solutions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root {
+  --black: #050508;
+  --gold: #FFD700;
+  --gold-dim: #b89a00;
+  --orange: #FF6B00;
+  --orange-glow: rgba(255,107,0,0.18);
+  --white: #f0f0f0;
+  --muted: #8a8a9a;
+  --surface: #0d0d14;
+  --card: #13131e;
+  --border: rgba(255,215,0,0.12);
+  --font-display: 'Orbitron', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);color:var(--white);font-family:var(--font-body);overflow-x:hidden;}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--black);}
+::-webkit-scrollbar-thumb{background:var(--orange);border-radius:10px;}
+
+/* LOADER */
+#loader{position:fixed;inset:0;background:var(--black);display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity 0.6s ease;}
+#loader .ring{width:80px;height:80px;border:3px solid var(--border);border-top:3px solid var(--gold);border-radius:50%;animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* NAV */
+nav{position:fixed;top:0;width:100%;z-index:999;background:rgba(5,5,8,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:68px;}
+.nav-brand{font-family:var(--font-display);font-size:22px;font-weight:900;color:var(--gold);letter-spacing:3px;text-decoration:none;}
+.nav-brand span{color:var(--orange);}
+.nav-links{display:flex;gap:40px;list-style:none;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;font-weight:500;transition:color 0.3s;position:relative;}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--orange);transition:width 0.3s;}
+.nav-links a:hover{color:var(--white);}
+.nav-links a:hover::after{width:100%;}
+.nav-cta{background:var(--orange);color:#fff!important;padding:9px 22px;border-radius:4px;font-weight:600!important;}
+.nav-cta::after{display:none!important;}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;}
+.hamburger span{width:25px;height:2px;background:var(--gold);border-radius:2px;transition:0.3s;}
+
+/* HERO - two column layout matching screenshot */
+.hero{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  align-items:center;
+  padding:100px 5% 60px;
+  position:relative;
+  overflow:hidden;
+  gap:40px;
+}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 30% 50%,rgba(255,107,0,0.09) 0%,transparent 70%),radial-gradient(ellipse 50% 50% at 80% 80%,rgba(255,215,0,0.05) 0%,transparent 60%);}
+.grid-overlay{position:absolute;inset:0;background-image:linear-gradient(rgba(255,215,0,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,215,0,0.04) 1px,transparent 1px);background-size:50px 50px;}
+.hero-left{position:relative;z-index:1;}
+.hero-tag{display:inline-block;font-family:var(--font-mono);font-size:11px;color:var(--orange);letter-spacing:3px;text-transform:uppercase;border:1px solid var(--orange);padding:6px 16px;border-radius:2px;margin-bottom:28px;animation:fadeUp 0.8s ease both;}
+.hero h1{font-family:var(--font-display);font-size:clamp(32px,5vw,70px);font-weight:900;line-height:1.05;letter-spacing:-1px;margin-bottom:18px;animation:fadeUp 0.8s 0.15s ease both;}
+.hero h1 em{font-style:normal;color:var(--gold);}
+.hero-sub{font-size:clamp(13px,1.6vw,17px);color:var(--muted);max-width:520px;margin:0 0 36px;line-height:1.7;animation:fadeUp 0.8s 0.3s ease both;}
+.hero-btns{display:flex;gap:16px;flex-wrap:wrap;animation:fadeUp 0.8s 0.45s ease both;}
+.btn-primary{background:var(--orange);color:#fff;padding:14px 32px;border-radius:4px;font-weight:600;font-size:13px;letter-spacing:1px;text-decoration:none;text-transform:uppercase;transition:all 0.3s;box-shadow:0 0 30px rgba(255,107,0,0.3);}
+.btn-primary:hover{background:#e05a00;box-shadow:0 0 50px rgba(255,107,0,0.5);transform:translateY(-2px);}
+.btn-outline{background:transparent;color:var(--gold);padding:14px 32px;border:1px solid var(--gold-dim);border-radius:4px;font-weight:600;font-size:13px;letter-spacing:1px;text-decoration:none;text-transform:uppercase;transition:all 0.3s;}
+.btn-outline:hover{background:rgba(255,215,0,0.08);border-color:var(--gold);}
+
+.hero-stats{display:flex;gap:40px;flex-wrap:wrap;margin-top:50px;animation:fadeUp 0.8s 0.6s ease both;}
+.stat{text-align:left;}
+.stat-num{font-family:var(--font-display);font-size:32px;font-weight:700;color:var(--gold);display:block;}
+.stat-label{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:3px;}
+
+/* GPS DASHBOARD VISUAL */
+.hero-right{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;animation:fadeUp 0.8s 0.3s ease both;}
+.gps-dashboard{
+  background:rgba(13,13,20,0.95);
+  border:1px solid rgba(255,107,0,0.35);
+  border-radius:16px;
+  padding:20px;
+  width:100%;
+  max-width:420px;
+  box-shadow:0 0 60px rgba(255,107,0,0.15),0 0 120px rgba(255,107,0,0.05);
+  position:relative;
+}
+.dash-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.dash-title{font-family:var(--font-mono);font-size:10px;color:var(--orange);letter-spacing:2px;text-transform:uppercase;}
+.dash-live{display:flex;align-items:center;gap:6px;font-size:10px;color:#00c864;}
+.dash-live::before{content:'';width:6px;height:6px;background:#00c864;border-radius:50%;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.dash-map{
+  background:linear-gradient(135deg,#0a0a15,#0f0f1e);
+  border:1px solid var(--border);
+  border-radius:10px;
+  height:180px;
+  position:relative;
+  overflow:hidden;
+  margin-bottom:16px;
+}
+.map-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,107,0,0.07) 1px,transparent 1px),linear-gradient(90deg,rgba(255,107,0,0.07) 1px,transparent 1px);background-size:24px 24px;}
+.map-route{position:absolute;inset:0;}
+.map-route svg{width:100%;height:100%;}
+.map-pin{position:absolute;bottom:35%;left:55%;transform:translate(-50%,-50%);}
+.map-pin i{font-size:28px;color:var(--orange);filter:drop-shadow(0 0 8px rgba(255,107,0,0.8));}
+.map-vehicle{position:absolute;top:30%;left:25%;transform:translate(-50%,-50%);}
+.map-vehicle i{font-size:20px;color:var(--gold);filter:drop-shadow(0 0 6px rgba(255,215,0,0.7));}
+.map-vehicle2{position:absolute;top:55%;left:70%;transform:translate(-50%,-50%);}
+.map-vehicle2 i{font-size:18px;color:var(--orange);filter:drop-shadow(0 0 5px rgba(255,107,0,0.7));}
+.dash-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.dash-stat{background:rgba(255,107,0,0.06);border:1px solid rgba(255,107,0,0.15);border-radius:8px;padding:12px 10px;text-align:center;}
+.dash-stat-val{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--gold);}
+.dash-stat-unit{font-size:9px;color:var(--orange);display:block;margin-top:1px;}
+.dash-stat-label{font-size:9px;color:var(--muted);display:block;margin-top:4px;letter-spacing:1px;text-transform:uppercase;}
+.dash-bar-wrap{margin-top:14px;}
+.dash-bar-label{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:5px;}
+.dash-bar-label span:last-child{color:var(--orange);}
+.dash-bar{background:rgba(255,255,255,0.06);border-radius:4px;height:6px;overflow:hidden;}
+.dash-bar-fill{height:100%;background:linear-gradient(90deg,var(--orange),var(--gold));border-radius:4px;width:78%;}
+.dash-bar-fill2{height:100%;background:linear-gradient(90deg,#00c864,#00a050);border-radius:4px;width:100%;animation:statusOn 2s ease infinite;}
+@keyframes statusOn{0%,100%{opacity:1;}50%{opacity:0.6;}}
+
+/* SECTIONS */
+section{padding:90px 5%;}
+.sec-eyebrow{font-family:var(--font-mono);font-size:11px;color:var(--orange);letter-spacing:3px;text-transform:uppercase;display:block;margin-bottom:12px;text-align:center;}
+.sec-title{font-family:var(--font-display);font-size:clamp(26px,4vw,42px);font-weight:700;text-align:center;margin-bottom:14px;letter-spacing:-0.5px;}
+.sec-title span{color:var(--gold);}
+.sec-desc{text-align:center;color:var(--muted);max-width:600px;margin:0 auto 60px;line-height:1.7;font-size:15px;}
+
+/* SERVICES */
+.services{background:var(--surface);}
+.services-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;}
+.service-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:22px 18px;position:relative;overflow:hidden;transition:all 0.35s cubic-bezier(0.2,0.8,0.2,1);}
+.service-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--orange),var(--gold));transform:scaleX(0);transform-origin:left;transition:transform 0.35s ease;}
+.service-card:hover{transform:translateY(-4px);border-color:rgba(255,107,0,0.3);box-shadow:0 16px 40px rgba(0,0,0,0.4);}
+.service-card:hover::before{transform:scaleX(1);}
+.service-icon{width:44px;height:44px;background:var(--orange-glow);border:1px solid rgba(255,107,0,0.25);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;font-size:18px;color:var(--orange);}
+.service-card h3{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:0.8px;color:var(--gold);margin-bottom:8px;}
+.service-card p{font-size:11.5px;color:var(--muted);line-height:1.65;}
+.service-num{position:absolute;top:14px;right:16px;font-family:var(--font-mono);font-size:10px;color:rgba(255,215,0,0.2);letter-spacing:1px;}
+
+/* PRODUCTS */
+.products{background:var(--black);}
+.product-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+.product-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:all 0.35s ease;position:relative;}
+.product-card:hover{transform:translateY(-8px);box-shadow:0 30px 60px rgba(0,0,0,0.5);border-color:rgba(255,107,0,0.4);}
+.product-badge{background:var(--surface);padding:30px 20px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;border-bottom:1px solid var(--border);}
+.product-badge i{font-size:44px;color:var(--orange);}
+.product-badge .vehicle-type{font-family:var(--font-mono);font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+.product-body{padding:20px;}
+.product-body h3{font-family:var(--font-display);font-size:12px;font-weight:700;color:var(--white);margin-bottom:6px;letter-spacing:0.5px;}
+.product-features{list-style:none;margin:12px 0;}
+.product-features li{font-size:12px;color:var(--muted);padding:3px 0;display:flex;align-items:center;gap:7px;}
+.product-features li::before{content:'✓';color:var(--orange);font-weight:700;font-size:10px;}
+.product-btn{display:block;margin-top:16px;text-align:center;background:var(--orange);color:white;padding:11px;border-radius:6px;font-weight:600;font-size:12px;text-decoration:none;letter-spacing:1px;text-transform:uppercase;transition:all 0.3s;}
+.product-btn:hover{background:#cc5500;}
+.price-cta{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;margin-bottom:2px;padding:9px 14px;border:1px dashed rgba(255,215,0,0.35);border-radius:6px;background:rgba(255,215,0,0.04);}
+.price-cta i{color:var(--gold);font-size:12px;}
+.price-cta span{font-family:var(--font-mono);font-size:10px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;}
+.popular-tag{position:absolute;top:12px;right:12px;background:var(--gold);color:var(--black);font-size:9px;font-weight:700;letter-spacing:1px;padding:3px 9px;border-radius:2px;text-transform:uppercase;}
+
+/* VEHICLES - 3 column table matching screenshot */
+.vehicles{background:var(--surface);}
+.vehicles-table{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:0;
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+}
+.vt-col{border-right:1px solid var(--border);}
+.vt-col:last-child{border-right:none;}
+.vt-col-header{
+  background:linear-gradient(135deg,#1a1a28,#0d0d14);
+  padding:20px 22px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  border-bottom:2px solid var(--orange);
+}
+.vt-col-header i{font-size:20px;color:var(--orange);}
+.vt-col-header span{font-family:var(--font-display);font-size:12px;font-weight:700;color:var(--white);letter-spacing:1.5px;text-transform:uppercase;}
+.vt-body{padding:6px 0;}
+.vt-subcategory{padding:0;}
+.vt-sub-label{
+  font-family:var(--font-mono);
+  font-size:10px;
+  color:var(--gold);
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  padding:12px 22px 6px;
+  display:block;
+}
+.vt-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:7px 22px;
+  font-size:12.5px;
+  color:var(--muted);
+  border-bottom:1px solid rgba(255,215,0,0.05);
+  transition:all 0.2s;
+}
+.vt-item:last-child{border-bottom:none;}
+.vt-item:hover{background:rgba(255,107,0,0.05);color:var(--white);}
+.vt-item i{font-size:9px;color:var(--orange);}
+.vt-divider{height:1px;background:var(--border);margin:4px 0;}
+
+/* WHY */
+.why{background:var(--black);}
+.why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+.why-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:30px 24px;text-align:center;transition:all 0.3s;}
+.why-card:hover{border-color:rgba(255,215,0,0.3);transform:translateY(-4px);}
+.why-card i{font-size:36px;color:var(--gold);margin-bottom:16px;display:block;}
+.why-card h4{font-family:var(--font-display);font-size:12px;letter-spacing:1.5px;color:var(--white);margin-bottom:10px;}
+.why-card p{font-size:13px;color:var(--muted);line-height:1.65;}
+
+/* CONTACT */
+.contact{background:var(--surface);}
+.contact-wrap{display:grid;grid-template-columns:1fr 1.4fr;gap:60px;max-width:1000px;margin:0 auto;align-items:start;}
+.contact-info h3{font-family:var(--font-display);font-size:20px;color:var(--gold);margin-bottom:24px;letter-spacing:1px;}
+.contact-item{display:flex;gap:16px;align-items:flex-start;margin-bottom:24px;}
+.ci-icon{width:40px;height:40px;min-width:40px;background:var(--orange-glow);border:1px solid rgba(255,107,0,0.2);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--orange);font-size:16px;}
+.ci-text span{display:block;font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
+.ci-text a,.ci-text p{color:var(--white);font-size:14px;text-decoration:none;line-height:1.5;}
+.ci-text a:hover{color:var(--gold);}
+.contact-form{display:flex;flex-direction:column;gap:14px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-group label{font-size:11px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;font-weight:500;}
+.form-group input,.form-group select,.form-group textarea{background:var(--card);border:1px solid var(--border);border-radius:6px;color:var(--white);padding:13px 16px;font-size:14px;font-family:var(--font-body);outline:none;transition:border-color 0.3s;width:100%;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--orange);}
+.form-group select option{background:var(--card);}
+.form-group textarea{resize:vertical;min-height:120px;}
+.form-submit{background:var(--orange);color:white;border:none;padding:15px;border-radius:6px;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all 0.3s;box-shadow:0 0 25px rgba(255,107,0,0.25);font-family:var(--font-body);}
+.form-submit:hover{background:#cc5500;box-shadow:0 0 40px rgba(255,107,0,0.4);transform:translateY(-2px);}
+
+/* FOOTER */
+footer{background:#030305;border-top:1px solid var(--border);padding:50px 5% 30px;}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:50px;margin-bottom:40px;}
+.footer-brand h3{font-family:var(--font-display);font-size:24px;font-weight:900;color:var(--gold);letter-spacing:3px;margin-bottom:12px;}
+.footer-brand p{font-size:13px;color:var(--muted);line-height:1.75;max-width:300px;}
+.footer-col h4{font-family:var(--font-mono);font-size:11px;letter-spacing:2px;color:var(--orange);text-transform:uppercase;margin-bottom:18px;}
+.footer-col ul{list-style:none;}
+.footer-col ul li{margin-bottom:10px;}
+.footer-col ul li a{color:var(--muted);font-size:13px;text-decoration:none;transition:color 0.3s;}
+.footer-col ul li a:hover{color:var(--white);}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:24px;flex-wrap:wrap;gap:14px;}
+.footer-bottom p{font-size:12px;color:var(--muted);}
+.footer-bottom span{color:var(--orange);}
+
+/* WA FLOAT */
+.wa-float{position:fixed;right:24px;bottom:24px;z-index:888;background:#25D366;color:white;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 20px rgba(37,211,102,0.4);text-decoration:none;transition:transform 0.3s;}
+.wa-float:hover{transform:scale(1.12);}
+.wa-float .wa-tooltip{position:absolute;right:66px;background:rgba(10,10,15,0.95);color:var(--white);font-size:12px;padding:8px 14px;border-radius:6px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity 0.3s;border:1px solid var(--border);}
+.wa-float:hover .wa-tooltip{opacity:1;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+.reveal{opacity:0;transform:translateY(30px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+/* RESPONSIVE */
+@media(max-width:1200px){
+  .services-grid{grid-template-columns:repeat(3,1fr);}
+  .product-grid{grid-template-columns:repeat(2,1fr);}
+  .why-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;}
+  .hero-right{display:none;}
+  .hero-left{text-align:center;}
+  .hero-btns{justify-content:center;}
+  .hero-stats{justify-content:center;}
+  .contact-wrap{grid-template-columns:1fr;}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+  .vehicles-table{grid-template-columns:1fr;}
+  .vt-col{border-right:none;border-bottom:1px solid var(--border);}
+  .vt-col:last-child{border-bottom:none;}
+}
+@media(max-width:640px){
+  .nav-links{display:none;flex-direction:column;position:absolute;top:68px;left:0;right:0;background:rgba(5,5,8,0.98);padding:20px;gap:20px;border-bottom:1px solid var(--border);}
+  .nav-links.open{display:flex;}
+  .hamburger{display:flex;}
+  .services-grid{grid-template-columns:1fr 1fr;}
+  .product-grid{grid-template-columns:1fr;}
+  .why-grid{grid-template-columns:1fr 1fr;}
+  .form-row{grid-template-columns:1fr;}
+  .footer-grid{grid-template-columns:1fr;}
+  .footer-bottom{flex-direction:column;text-align:center;}
+  .hero-stats{gap:24px;}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0s!important;transition-duration:0s!important;}}
+</style>
+</head>
+<body>
+
+<div id="loader"><div class="ring"></div></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-brand">TRY<span>LOGI</span></a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#products">Products</a></li>
+    <li><a href="#vehicles">Vehicles</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="https://wa.me/919629720235" class="nav-cta">Get Quote</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="toggleNav()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="grid-overlay"></div>
+
+  <div class="hero-left">
+    <div class="hero-tag">📡 Advanced GPS Intelligence</div>
+    <h1>Track. Secure.<br><em>Command.</em></h1>
+    <p class="hero-sub">Real-time GPS tracking solutions for bikes, cars, trucks & entire fleet operations — with enterprise-grade security built in.</p>
+    <div class="hero-btns">
+      <a href="#products" class="btn-primary">View Products</a>
+      <a href="#contact" class="btn-outline">Get Free Quote</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">15+</span><span class="stat-label">Services</span></div>
+      <div class="stat"><span class="stat-num">24/7</span><span class="stat-label">Live Tracking</span></div>
+      <div class="stat"><span class="stat-num">100%</span><span class="stat-label">Customisable</span></div>
+      <div class="stat"><span class="stat-num">50+</span><span class="stat-label">Vehicles Supported</span></div>
+    </div>
+  </div>
+
+  <!-- GPS Dashboard Visual -->
+  <div class="hero-right">
+    <div class="gps-dashboard">
+      <div class="dash-header">
+        <span class="dash-title">⬡ Live Tracking</span>
+        <span class="dash-live">Online</span>
+      </div>
+      <div class="dash-map">
+        <div class="map-grid"></div>
+        <div class="map-route">
+          <svg viewBox="0 0 420 180" preserveAspectRatio="none">
+            <path d="M60,140 Q120,80 180,100 Q240,120 300,60 Q340,30 380,50" stroke="rgba(255,107,0,0.6)" stroke-width="2" fill="none" stroke-dasharray="6,3"/>
+            <circle cx="60" cy="140" r="4" fill="var(--orange)" opacity="0.7"/>
+            <circle cx="300" cy="60" r="4" fill="var(--gold)" opacity="0.7"/>
+          </svg>
+        </div>
+        <div class="map-pin"><i class="fas fa-map-marker-alt"></i></div>
+        <div class="map-vehicle"><i class="fas fa-truck"></i></div>
+        <div class="map-vehicle2"><i class="fas fa-car"></i></div>
+      </div>
+      <div class="dash-stats">
+        <div class="dash-stat">
+          <div class="dash-stat-val">65</div>
+          <span class="dash-stat-unit">km/h</span>
+          <span class="dash-stat-label">Speed</span>
+        </div>
+        <div class="dash-stat">
+          <div class="dash-stat-val" style="color:#00c864;font-size:13px;padding-top:4px;">Online</div>
+          <span class="dash-stat-unit" style="color:#00c864;">●</span>
+          <span class="dash-stat-label">Status</span>
+        </div>
+        <div class="dash-stat">
+          <div class="dash-stat-val">78</div>
+          <span class="dash-stat-unit">%</span>
+          <span class="dash-stat-label">Fuel</span>
+        </div>
+      </div>
+      <div class="dash-bar-wrap" style="margin-top:14px;">
+        <div class="dash-bar-label"><span>Fuel Level</span><span>78%</span></div>
+        <div class="dash-bar"><div class="dash-bar-fill"></div></div>
+      </div>
+      <div class="dash-bar-wrap" style="margin-top:10px;">
+        <div class="dash-bar-label"><span>GPS Signal</span><span style="color:#00c864;">Strong</span></div>
+        <div class="dash-bar"><div class="dash-bar-fill2"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <span class="sec-eyebrow">What We Offer</span>
+  <h2 class="sec-title">Complete <span>Tracking Services</span></h2>
+  <p class="sec-desc">From real-time vehicle monitoring to personal safety tracking — every solution tailored to your exact needs.</p>
+  <div class="services-grid">
+    <div class="service-card reveal"><span class="service-num">01</span><div class="service-icon"><i class="fas fa-satellite"></i></div><h3>Real-Time Tracking</h3><p>Live location monitoring with zero delay via web and mobile app.</p></div>
+    <div class="service-card reveal"><span class="service-num">02</span><div class="service-icon"><i class="fas fa-history"></i></div><h3>Location History</h3><p>Review historical routes and get exact locations across any timeframe.</p></div>
+    <div class="service-card reveal"><span class="service-num">03</span><div class="service-icon"><i class="fas fa-draw-polygon"></i></div><h3>Geofencing</h3><p>Set virtual boundaries and get instant alerts when crossed.</p></div>
+    <div class="service-card reveal"><span class="service-num">04</span><div class="service-icon"><i class="fas fa-tachometer-alt"></i></div><h3>Speed Monitoring</h3><p>Custom speed alerts promote safer driving across your fleet.</p></div>
+    <div class="service-card reveal"><span class="service-num">05</span><div class="service-icon"><i class="fas fa-route"></i></div><h3>Route Optimization</h3><p>AI-optimized routes to reduce cost, save fuel and improve efficiency.</p></div>
+    <div class="service-card reveal"><span class="service-num">06</span><div class="service-icon"><i class="fas fa-user-shield"></i></div><h3>Driver Behavior Monitoring</h3><p>Track harsh braking, acceleration, idling and improve habits.</p></div>
+    <div class="service-card reveal"><span class="service-num">07</span><div class="service-icon"><i class="fas fa-heartbeat"></i></div><h3>Vehicle Health Monitoring</h3><p>Real-time diagnostics to reduce downtime and maintenance cost.</p></div>
+    <div class="service-card reveal"><span class="service-num">08</span><div class="service-icon"><i class="fas fa-lock"></i></div><h3>Anti-Theft & Recovery</h3><p>Locate stolen vehicles instantly and recover your assets fast.</p></div>
+    <div class="service-card reveal"><span class="service-num">09</span><div class="service-icon"><i class="fas fa-boxes"></i></div><h3>Asset Tracking</h3><p>Track equipment, trailers, containers and valuable assets.</p></div>
+    <div class="service-card reveal"><span class="service-num">10</span><div class="service-icon"><i class="fas fa-thermometer-half"></i></div><h3>Temperature Monitoring</h3><p>Real-time temperature and environment monitoring for sensitive cargo.</p></div>
+    <div class="service-card reveal"><span class="service-num">11</span><div class="service-icon"><i class="fas fa-user-check"></i></div><h3>Personal Tracking</h3><p>Ensure safety of loved ones or employees anywhere, anytime.</p></div>
+    <div class="service-card reveal"><span class="service-num">12</span><div class="service-icon"><i class="fas fa-puzzle-piece"></i></div><h3>Customization & Integration</h3><p>Tailored solutions integrated with your unique operations.</p></div>
+    <div class="service-card reveal"><span class="service-num">13</span><div class="service-icon"><i class="fas fa-bell"></i></div><h3>Alerts & Notifications</h3><p>Instant SMS, email and app alerts for every critical event.</p></div>
+    <div class="service-card reveal"><span class="service-num">14</span><div class="service-icon"><i class="fas fa-chart-bar"></i></div><h3>Reporting & Analytics</h3><p>Data-driven insights for smarter decisions and planning.</p></div>
+    <div class="service-card reveal"><span class="service-num">15</span><div class="service-icon"><i class="fas fa-mobile-alt"></i></div><h3>Mobile Apps</h3><p>Full tracking control right from your smartphone.</p></div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="products" id="products">
+  <span class="sec-eyebrow">Our Devices</span>
+  <h2 class="sec-title">Choose Your <span>Tracker</span></h2>
+  <p class="sec-desc">Professional-grade GPS trackers for every vehicle type. Contact us or DM for pricing — customized to your needs.</p>
+  <div class="product-grid">
+    <div class="product-card reveal">
+      <div class="product-badge"><i class="fas fa-motorcycle"></i><span class="vehicle-type">Bike / Scooter</span></div>
+      <div class="product-body">
+        <h3>Basic GPS Tracker</h3>
+        <ul class="product-features">
+          <li>Live location monitoring</li>
+          <li>Ignition On/Off Alerts</li>
+          <li>Trip History (30 days)</li>
+          <li>Mobile App Access</li>
+        </ul>
+        <div class="price-cta"><i class="fas fa-comment-dots"></i><span>Contact / DM for Pricing</span></div>
+        <a href="#contact" class="product-btn">Get This Device</a>
+      </div>
+    </div>
+    <div class="product-card reveal" style="border-color:rgba(255,107,0,0.35);">
+      <span class="popular-tag">Popular</span>
+      <div class="product-badge"><i class="fas fa-car"></i><span class="vehicle-type">Car / SUV</span></div>
+      <div class="product-body">
+        <h3>Standard GPS Tracker</h3>
+        <ul class="product-features">
+          <li>Real-Time + History</li>
+          <li>Geofencing Alerts</li>
+          <li>Speed Monitoring</li>
+          <li>Driver Behavior Reports</li>
+        </ul>
+        <div class="price-cta"><i class="fas fa-comment-dots"></i><span>Contact / DM for Pricing</span></div>
+        <a href="#contact" class="product-btn">Get This Device</a>
+      </div>
+    </div>
+    <div class="product-card reveal">
+      <div class="product-badge"><i class="fas fa-truck"></i><span class="vehicle-type">Commercial Vehicle</span></div>
+      <div class="product-body">
+        <h3>Advanced GPS Tracker</h3>
+        <ul class="product-features">
+          <li>Fleet Management</li>
+          <li>Route Optimization</li>
+          <li>Vehicle Health Monitor</li>
+          <li>Anti-Theft + Recovery</li>
+        </ul>
+        <div class="price-cta"><i class="fas fa-comment-dots"></i><span>Contact / DM for Pricing</span></div>
+        <a href="#contact" class="product-btn">Get This Device</a>
+      </div>
+    </div>
+    <div class="product-card reveal">
+      <div class="product-badge"><i class="fas fa-bus"></i><span class="vehicle-type">Truck / Bus</span></div>
+      <div class="product-body">
+        <h3>Live Tracking GPS</h3>
+        <ul class="product-features">
+          <li>Enterprise Fleet Control</li>
+          <li>Temperature Monitoring</li>
+          <li>Asset + Cargo Tracking</li>
+          <li>Full Analytics Dashboard</li>
+        </ul>
+        <div class="price-cta"><i class="fas fa-comment-dots"></i><span>Contact / DM for Pricing</span></div>
+        <a href="#contact" class="product-btn">Get This Device</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VEHICLES - 3 column table layout matching screenshot -->
+<section class="vehicles" id="vehicles">
+  <span class="sec-eyebrow">Supported Vehicles</span>
+  <h2 class="sec-title">GPS For Every <span>Vehicle</span></h2>
+  <p class="sec-desc">We support a wide range of personal and commercial vehicles across India. Find your vehicle and get a tracker today.</p>
+
+  <div class="vehicles-table reveal">
+
+    <!-- Personal Vehicles -->
+    <div class="vt-col">
+      <div class="vt-col-header">
+        <i class="fas fa-car"></i>
+        <span>Personal Vehicles</span>
+      </div>
+      <div class="vt-body">
+        <div class="vt-subcategory">
+          <span class="vt-sub-label">Hatchbacks</span>
+          <div class="vt-item"><i class="fas fa-circle"></i>Swift</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Hyundai i20</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Tata Altroz</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Volkswagen Polo</div>
+        </div>
+        <div class="vt-divider"></div>
+        <div class="vt-subcategory">
+          <span class="vt-sub-label">Sedans</span>
+          <div class="vt-item"><i class="fas fa-circle"></i>Honda City</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Hyundai Verna</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Maruti Suzuki Dzire</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Toyota Yaris</div>
+        </div>
+        <div class="vt-divider"></div>
+        <div class="vt-subcategory">
+          <span class="vt-sub-label">SUVs</span>
+          <div class="vt-item"><i class="fas fa-circle"></i>Kia Seltos</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Hyundai Creta</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Mahindra Thar</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Toyota Innova Crysta</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Mahindra XUV500</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Ford EcoSport</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Nissan Kicks</div>
+        </div>
+        <div class="vt-divider"></div>
+        <div class="vt-subcategory">
+          <span class="vt-sub-label">Crossovers</span>
+          <div class="vt-item"><i class="fas fa-circle"></i>Renault Kiger</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Maruti Suzuki S-Cross</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Toyota Urban Cruiser</div>
+        </div>
+        <div class="vt-divider"></div>
+        <div class="vt-subcategory">
+          <span class="vt-sub-label">MPVs</span>
+          <div class="vt-item"><i class="fas fa-circle"></i>Maruti Suzuki Ertiga</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Two-Wheelers -->
+    <div class="vt-col">
+      <div class="vt-col-header">
+        <i class="fas fa-motorcycle"></i>
+        <span>Two-Wheelers</span>
+      </div>
+      <div class="vt-body">
+        <div class="vt-subcategory">
+          <span class="vt-sub-label">Scooters</span>
+          <div class="vt-item"><i class="fas fa-circle"></i>Honda Activa</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>TVS Jupiter</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Suzuki Access</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Yamaha Fascino</div>
+        </div>
+        <div class="vt-divider"></div>
+        <div class="vt-subcategory">
+          <span class="vt-sub-label">Motorcycles</span>
+          <div class="vt-item"><i class="fas fa-circle"></i>Bajaj Pulsar</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Royal Enfield Classic</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Honda CB Shine</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Hero Splendor</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>TVS Apache</div>
+        </div>
+        <div class="vt-divider"></div>
+        <div class="vt-subcategory">
+          <span class="vt-sub-label">Sports Bikes</span>
+          <div class="vt-item"><i class="fas fa-circle"></i>KTM Duke</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Yamaha R15</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Commercial Vehicles -->
+    <div class="vt-col">
+      <div class="vt-col-header">
+        <i class="fas fa-truck"></i>
+        <span>Commercial Vehicles</span>
+      </div>
+      <div class="vt-body">
+        <div class="vt-subcategory">
+          <span class="vt-sub-label">Trucks</span>
+          <div class="vt-item"><i class="fas fa-circle"></i>Tata Ace</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Ashok Leyland Dost</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Bolero Maxitruck Plus</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Eicher Pro 2049</div>
+        </div>
+        <div class="vt-divider"></div>
+        <div class="vt-subcategory">
+          <span class="vt-sub-label">Vans</span>
+          <div class="vt-item"><i class="fas fa-circle"></i>Maruti Suzuki Omni</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Tata Winger</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Force Traveller</div>
+        </div>
+        <div class="vt-divider"></div>
+        <div class="vt-subcategory">
+          <span class="vt-sub-label">Buses</span>
+          <div class="vt-item"><i class="fas fa-circle"></i>Ashok Leyland Sunshine</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Tata Starbus</div>
+        </div>
+        <div class="vt-divider"></div>
+        <div class="vt-subcategory">
+          <span class="vt-sub-label">Commercial Pickups</span>
+          <div class="vt-item"><i class="fas fa-circle"></i>Mahindra Bolero Pickup</div>
+          <div class="vt-item"><i class="fas fa-circle"></i>Tata Xenon Yodha</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- WHY CHOOSE US -->
+<section class="why">
+  <span class="sec-eyebrow">Why TRY LOGI</span>
+  <h2 class="sec-title">Built for <span>Reliability</span></h2>
+  <p class="sec-desc">The quality of our GPS tracking services is directly tied to the value our customers receive. We deliver reliable, tailored solutions — you get what you pay for, and more.</p>
+  <div class="why-grid">
+    <div class="why-card reveal"><i class="fas fa-satellite-dish"></i><h4>99.9% Uptime</h4><p>Enterprise-grade infrastructure ensures your tracking is always live, always reliable.</p></div>
+    <div class="why-card reveal"><i class="fas fa-sliders-h"></i><h4>Fully Tailored</h4><p>Every solution is customized to your unique business workflow and requirements.</p></div>
+    <div class="why-card reveal"><i class="fas fa-headset"></i><h4>Dedicated Support</h4><p>Our team is available to assist you with installation, setup, and ongoing operations.</p></div>
+    <div class="why-card reveal"><i class="fas fa-plug"></i><h4>Easy Integration</h4><p>Our system integrates seamlessly with your existing software and management tools.</p></div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <span class="sec-eyebrow">Get In Touch</span>
+  <h2 class="sec-title">Contact <span>TRY LOGI</span></h2>
+  <p class="sec-desc">Ready to secure and track your vehicles? Send us an inquiry and we'll get back to you within 24 hours.</p>
+  <div class="contact-wrap">
+    <div class="contact-info reveal">
+      <h3>Reach Us Directly</h3>
+      <div class="contact-item">
+        <div class="ci-icon"><i class="fas fa-phone"></i></div>
+        <div class="ci-text"><span>Phone</span><a href="tel:+919629720235">+91 96297 20235</a></div>
+      </div>
+      <div class="contact-item">
+        <div class="ci-icon"><i class="fas fa-envelope"></i></div>
+        <div class="ci-text"><span>Email</span><a href="mailto:md.razool.abu@gmail.com">md.razool.abu@gmail.com</a></div>
+      </div>
+      <div class="contact-item">
+        <div class="ci-icon"><i class="fab fa-whatsapp"></i></div>
+        <div class="ci-text"><span>WhatsApp</span><a href="https://wa.me/919629720235">Chat on WhatsApp</a></div>
+      </div>
+      <div class="contact-item">
+        <div class="ci-icon"><i class="fas fa-clock"></i></div>
+        <div class="ci-text"><span>Availability</span><p>Mon – Sat: 9:00 AM – 7:00 PM</p></div>
+      </div>
+    </div>
+    <form class="contact-form reveal" onsubmit="handleSubmit(event)">
+      <div class="form-row">
+        <div class="form-group"><label>Full Name</label><input type="text" placeholder="Your name" required></div>
+        <div class="form-group"><label>Phone Number</label><input type="tel" placeholder="+91 00000 00000" required></div>
+      </div>
+      <div class="form-group"><label>Email Address</label><input type="email" placeholder="your@email.com"></div>
+      <div class="form-group">
+        <label>Vehicle / Product Interest</label>
+        <select>
+          <option value="">Select a product...</option>
+          <option>Basic GPS Tracker (Bike/Scooter)</option>
+          <option>Standard GPS Tracker (Car/SUV)</option>
+          <option>Advanced GPS Tracker (Commercial)</option>
+          <option>Live Tracking GPS (Truck/Bus)</option>
+          <option>Custom / Fleet Solution</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Message</label><textarea placeholder="Tell us about your requirement, number of vehicles, or any specific feature you need..."></textarea></div>
+      <button type="submit" class="form-submit">Send Inquiry →</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <h3>TRYLOGI</h3>
+      <p>Advanced GPS tracking solutions for individuals, businesses, and enterprise fleets. Built for reliability, customized for you.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#products">Products</a></li>
+        <li><a href="#vehicles">Vehicles</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="tel:+919629720235">+91 96297 20235</a></li>
+        <li><a href="mailto:md.razool.abu@gmail.com">md.razool.abu@gmail.com</a></li>
+        <li><a href="https://wa.me/919629720235">WhatsApp Us</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 <span>TRY LOGI</span> GPS Tracking Solutions. All Rights Reserved.</p>
+    <p>Made with <span>♥</span> for reliable fleet management.</p>
+  </div>
+</footer>
+
+<a href="https://wa.me/919629720235" class="wa-float" target="_blank">
+  <i class="fab fa-whatsapp"></i>
+  <span class="wa-tooltip">Chat on WhatsApp</span>
+</a>
+
+<script>
+  window.addEventListener('load',()=>{
+    setTimeout(()=>{
+      const l=document.getElementById('loader');
+      l.style.opacity='0';
+      setTimeout(()=>l.remove(),600);
+    },800);
+  });
+  function toggleNav(){document.getElementById('navLinks').classList.toggle('open');}
+  const reveals=document.querySelectorAll('.reveal');
+  const io=new IntersectionObserver((entries)=>{
+    entries.forEach((e,i)=>{
+      if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*60);io.unobserve(e.target);}
+    });
+  },{threshold:0.06});
+  reveals.forEach(r=>io.observe(r));
+  function handleSubmit(e){
+    e.preventDefault();
+    const btn=e.target.querySelector('.form-submit');
+    btn.textContent='✓ Inquiry Sent!';
+    btn.style.background='#00c864';
+    setTimeout(()=>{btn.textContent='Send Inquiry →';btn.style.background='';e.target.reset();},3000);
+  }
+  const sections=document.querySelectorAll('section[id]');
+  const navAs=document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll',()=>{
+    let current='';
+    sections.forEach(s=>{if(window.scrollY>=s.offsetTop-120)current=s.id;});
+    navAs.forEach(a=>{a.style.color=a.getAttribute('href')==='#'+current?'var(--white)':'';});
+  });
+</script>
+</body>
+</html>
